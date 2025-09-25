@@ -9,13 +9,18 @@ router.get('/posts', (req, res) =>{
     res.send("Página de posts")
 })
 
-router.get("/categorias", (req, res) => {
-    res.send("Pagina de categorias")
+router.get("/categorias", async (req, res) => { 
+    res.render("admin/categorias")
+    
 })
+
+router.get("/categorias/add", (req, res) => {
+    res.render("admin/addcategorias")
+})
+
 
 router.get("/teste", (req, res) => {
-    res.send("TESTE")
+    res.send("Isso é um teste")
 })
-
 
 module.exports = router

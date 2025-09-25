@@ -5,6 +5,7 @@
      const app = express()
      const admin = require("./routes/admin")
      const path = require("path")
+     const mysql = require('mysql2/promise')
 
 
 // Configurações 
@@ -15,6 +16,30 @@
     // Handlebars 
         app.engine('handlebars', engine({defaultLayout: 'main'}))
         app.set('view engine', 'handlebars');
+
+      // MySQL - Pool de Conexões
+        const db = mysql.createPool({
+            host: 'localhost',
+            user: 'root',
+            password: '6863', // Coloque sua senha do MySQL
+            database: 'blogapp',
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0
+        });
+
+        // Testar conexão
+        db.getConnection()
+            .then((connection) => {
+                console.log("Conectado ao MySQL")
+                connection.release() // Libera a conexão de volta para o pool
+            })
+            .catch((err) => {
+                console.log("Erro ao conectar: " + err)
+            })
+
+        // Disponibilizar conexão globalmente
+        app.locals.db = db;
 
     // Public
        app.use(express.static(path.join(__dirname,"public")))

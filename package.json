@@ -4,7 +4,8 @@
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
     "mongoose": "^8.18.2",
-    "mysql2": "^3.15.0"
+    "mysql2": "^3.15.1",
+    "sequelize": "^6.37.7"
   },
   "name": "blogapp",
   "version": "1.0.0",

@@ -1,22 +1,21 @@
-const db = mysql.createPool({
- host: 'localhost',
- user: 'root', 
- password: '6863',
- database: 'blogapp',
- waitForConnections: true,
- connectionLimit: 10,
- queueLimit: 0
- });
+// 1. Importe a biblioteca do Sequelize
+const Sequelize = require('sequelize');
 
- // Testar conexão
- db.getConnection()
- .then((connection) => {
- console.log("Conectado ao MySQL")
- connection.release()
- })
- .catch((err) => {
-console.log("Erro ao conectar: " + err)
- })
+// 2. Crie a instância da conexão e atribua à variável 'sequelize'
+const sequelize = new Sequelize('blogapp', 'root', '6863', {
+    host: 'localhost',
+    dialect: 'mysql',
+    logging: false 
+});
 
- // Disponibilizar conexão globalmente
- app.locals.db = db;
+// 3. (Opcional, mas recomendado) Verifique se a conexão foi bem-sucedida
+sequelize.authenticate()
+    .then(() => {
+        console.log("Conexão com o banco de dados realizada com sucesso!");
+    })
+    .catch((error) => {
+        console.error("Erro ao conectar com o banco de dados: ", error);
+    });
+
+// 4. Exporte a conexão para que outros arquivos (como seus Models) possam usá-la
+module.exports = sequelize;

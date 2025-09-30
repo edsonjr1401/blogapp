@@ -1,11 +1,8 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
+const db = require('../config/bd'); // Sua conexão importada
 
-const sequelize = new Sequelize('database', 'blofapp', 'senha', {
-  host: 'localhost',
-  dialect: 'mysql'
-});
-
-const Categoria = sequelize.define('Categoria', {
+// Use 'db', a variável que contém sua conexão, para definir o model
+const Categoria = db.define('Categoria', {
     nome: {
         type: DataTypes.STRING,
         allowNull: false
@@ -19,5 +16,8 @@ const Categoria = sequelize.define('Categoria', {
         defaultValue: DataTypes.NOW
     }
 });
+
+// É bom garantir que a tabela seja criada no banco de dados
+Categoria.sync({ alter: true });
 
 module.exports = Categoria;

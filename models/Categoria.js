@@ -1,7 +1,8 @@
-const { DataTypes } = require('sequelize');
-const db = require('../config/bd'); // Sua conexão importada
+// models/Categoria.js
 
-// Use 'db', a variável que contém sua conexão, para definir o model
+const { DataTypes } = require('sequelize');
+const db = require('../config/bd');
+
 const Categoria = db.define('Categoria', {
     nome: {
         type: DataTypes.STRING,
@@ -15,9 +16,9 @@ const Categoria = db.define('Categoria', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }
+}, {
+    // Mapeia o modelo para a tabela 'categorias' no banco de dados
+    tableName: 'categorias' 
 });
-
-// É bom garantir que a tabela seja criada no banco de dados
-Categoria.sync({ alter: true });
 
 module.exports = Categoria;

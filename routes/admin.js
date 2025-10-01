@@ -66,6 +66,11 @@ router.post('/categorias/nova', (req, res) => {
             res.redirect('/admin/categorias/add');
         });
     }
+
+router.get("/categorias/edit/:id", (req, res) => {
+
+})
+
 });
 
 module.exports = router;

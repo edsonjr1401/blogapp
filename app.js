@@ -13,7 +13,7 @@ const flash = require("connect-flash");
 // Configurações 
     // 2. Configurar a Sessão (ESSENCIAL PARA O FLASH)
     app.use(session({
-        secret: "chavesecretaparaoprojeto", // Troque por uma chave mais segura
+        secret: "cursodenode", 
         resave: true,
         saveUninitialized: true
     }));

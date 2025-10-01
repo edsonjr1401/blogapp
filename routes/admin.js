@@ -16,9 +16,9 @@ router.get('/posts', (req, res) => {
 
 // Rota para listar todas as categorias
 router.get("/categorias", (req, res) => { 
-    Categoria.findAll({ order: [['nome', 'ASC']] })
+    Categoria.findAll({ order: [['date', 'ASC']] })
         .then((categoriasEncontradas) => {
-            // Converte os dados para um formato compatível com o Handlebars
+           
             const categorias = categoriasEncontradas.map(cat => cat.get({ plain: true }));
             
             // Renderiza a view e passa os dados das categorias

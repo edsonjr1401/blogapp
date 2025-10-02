@@ -90,30 +90,28 @@ router.post('/categorias/nova', (req, res) => {
         });
 });
 
+router.post("/categorias/edit", async (req, res) => {
+    try {
+        const categoriaParaEditar = await Categoria.findByPk(req.body.id);
 
-router.post("/categorias/edit", (req, res) => {
+        if (!categoriaParaEditar) {
+            req.flash("error_msg", "Esta categoria não existe ou não foi encontrada.");
+            return res.redirect("/admin/categorias");
+        }
 
-    categoria.findOne({id: req.body.id}).then((categoria) => {
+        categoriaParaEditar.nome = req.body.nome;
+        categoriaParaEditar.slug = req.body.slug;
 
-        categoria.nome = req.body.nome
-        categoria.slug = req.body.slug
+        await categoriaParaEditar.save();
 
-        categoria.save().then(() => {
-         req.flash("sucess_msg", "Categoria editada com sucesso!")
-         res.redirect("/admin/categorias")
-        }).catch((err) =>{
-            req.flash("error_msg", "Houve um erro interno ao salvar a edição da categoria")
-            res.redirect("/admin/categorias")
-        })
+        req.flash("success_msg", "Categoria editada com sucesso!");
+        res.redirect("/admin/categorias");
 
-        
-    })
-
-
-    }).catch((err) => {
-        req.flash("error_msg", "Houve um erro ao editar a categoria")
-        res.redirect("/admin/categorias")
-    })
-
+    } catch (err) {
+        console.error("Erro ao editar categoria:", err);
+        req.flash("error_msg", "Houve um erro interno ao tentar editar a categoria.");
+        res.redirect("/admin/categorias");
+    }
+});
 
 module.exports = router;

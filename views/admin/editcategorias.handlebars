@@ -7,7 +7,7 @@
             <div class="alert alert-danger">{{this.texto}}</div>
         {{/each}}
 
-        <form action="/admin/categorias/nova" method="POST">
+        <form action="/admin/categorias/edit" method="POST">
             <input type="hidden" name="id" value="{{categoria.id}}">
             <div class="form-group mb-3">
                 <label for="nome">Nome:</label>

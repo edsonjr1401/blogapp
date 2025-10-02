@@ -67,10 +67,28 @@ router.post('/categorias/nova', (req, res) => {
         });
     }
 
-router.get("/categorias/edit/:id", (req, res) => {
-
-})
 
 });
+
+    router.get("/categorias/edit/:id", (req, res) => {
+    const id = req.params.id;
+
+    Categoria.findOne({ where: { id: id } })
+        .then(categoria => {
+            if (!categoria) {
+                req.flash("error_msg", "Esta categoria não foi encontrada.");
+                return res.redirect("/admin/categorias");
+            }
+            
+            res.render("admin/editcategorias", { 
+                categoria: categoria.get({ plain: true }) 
+            });
+        })
+        .catch(err => {
+            req.flash("error_msg", "Houve um erro interno ao buscar a categoria.");
+            res.redirect("/admin/categorias");
+        });
+});
+
 
 module.exports = router;

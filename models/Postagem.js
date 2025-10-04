@@ -7,7 +7,6 @@ const Postagem = db.define('Postagem', {
         type: DataTypes.STRING,
         allowNull: false
 },
-
     slug: {
         type: DataTypes.STRING,
         allowNull: false
@@ -19,7 +18,12 @@ const Postagem = db.define('Postagem', {
     conteudo: {
         type: DataTypes.TEXT,
         allowNull: false
-    }       
+},
+    data: {
+        type: DataTypes.NUMBER, 
+        allowNull: false
+    },
+           
 
 });
 

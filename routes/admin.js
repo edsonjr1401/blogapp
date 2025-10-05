@@ -128,6 +128,10 @@ router.post("/categorias/deletar", (req, res) => {
     })
 })
 
+router.get("/postagens", (req, res) => {
+    res.render("admin/postagens")
+})
+
 module.exports = router;
 
 

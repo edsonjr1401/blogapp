@@ -1,8 +1,7 @@
-// routes/admin.js
-
 const express = require("express");
 const router = express.Router();
 const Categoria = require("../models/Categoria");
+const Postagem = require("../models/Postagem");
 
 // Rota principal do painel
 router.get('/', (req, res) => {
@@ -129,12 +128,45 @@ router.post("/categorias/deletar", (req, res) => {
 })
 
 router.get("/postagens", (req, res) => {
-    res.render("admin/postagens")
+        res.render("admin/postagens")
 })
 
 router.get("/postagens/add", (req, res) => {
-    res.render("admin/addpostagem")
+    Categoria.findAll({ raw: true }) 
+        .then((categorias) => {
+            res.render("admin/addpostagem", {categorias: categorias})
+        })
+        .catch((err) => {
+            req.flash("error_msg", "Houve um erro ao buscar as categorias")
+            res.redirect("/admin")
+        })
 })
+
+router.post("/postagens/nova", (req, res) => {
+
+    var erro = []
+
+    if(req.body.categoria == "0"){
+        erro.push({texto: "Categoira invalida, registre uma categoria"})
+    }
+
+    if(erros.length > 0){
+        res.render("admin/addpostagem", {erros: erros})
+    }else{
+        const novaPostagem = {
+            titulo: req.body.titulo,
+            descrição: req.body.descricao,
+            conteudo: req.body.conteudo,
+            categoria: req.body.categoria,
+            slug: req.body.slug
+        }
+
+    }
+
+
+
+})
+
 module.exports = router;
 
 

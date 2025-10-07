@@ -161,11 +161,25 @@ router.post("/postagens/nova", (req, res) => {
             slug: req.body.slug
         }
 
+    Postagem.create(novaPostagem)
+        .then(() => {
+            req.flash("success_msg", "Postagem criada com sucesso!")
+            res.redirect("/admin/postagens")
+        })
+        .catch((err) => {
+            req.flash("error_msg", "Houve um erro durante o salvamento da postagem")
+            res.redirect("/admin/postagens")
+        })
+
     }
 
 
-
 })
+
+    
+
+
+
 
 module.exports = router;
 

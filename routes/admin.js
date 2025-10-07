@@ -178,9 +178,6 @@ router.post("/postagens/nova", (req, res) => {
 
     
 
-
-
-
 module.exports = router;
 
 

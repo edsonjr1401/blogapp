@@ -7,16 +7,17 @@
 <div class="card">
     <div class="card-body">
         <h4>Nova postagem: </h4>
-        <form action="/admin/postagens/nove" method="POST">
+        <form action="/admin/postagens/nova" method="POST">
             <label for="titulo">Titulo: </label>
             <input type="text" name="titulo" class="form-control" required>
             <label for="slug">Slug: </label>
             <input type="text" name="slug" class="form-control" required>
             <label for="descricao">Descrição: </label>
             <input type="text" name="descricao" class="form-control" required>
-            <label for="conteudo">Conteudo: </label>
-            <input type="text" name="conteudo" class="form-control" required>
-            <select name="categoria" class="custom-select">
+            <label for="conteudo">Conteúdo: </label>
+            <textarea name="conteudo" class="form-control"></textarea>
+            <label for="categoria">Categoria: </label> 
+            <select name="categoria" class="form-select"> 
             {{#each categorias}}
                 <option value="{{_id}}">{{nome}}</option>
             {{else}}

@@ -144,10 +144,10 @@ router.get("/postagens/add", (req, res) => {
 
 router.post("/postagens/nova", (req, res) => {
 
-    var erro = []
+    var erros = []
 
     if(req.body.categoria == "0"){
-        erro.push({texto: "Categoira invalida, registre uma categoria"})
+        erros.push({texto: "Categoira invalida, registre uma categoria"})
     }
 
     if(erros.length > 0){
@@ -155,10 +155,11 @@ router.post("/postagens/nova", (req, res) => {
     }else{
         const novaPostagem = {
             titulo: req.body.titulo,
-            descrição: req.body.descricao,
+            descricao: req.body.descricao,
             conteudo: req.body.conteudo,
             categoria: req.body.categoria,
-            slug: req.body.slug
+            slug: req.body.slug,
+            date: new Date()
         }
 
     Postagem.create(novaPostagem)
@@ -167,6 +168,7 @@ router.post("/postagens/nova", (req, res) => {
             res.redirect("/admin/postagens")
         })
         .catch((err) => {
+            console.log("ERRO:", err)
             req.flash("error_msg", "Houve um erro durante o salvamento da postagem")
             res.redirect("/admin/postagens")
         })

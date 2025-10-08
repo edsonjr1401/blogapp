@@ -200,25 +200,30 @@ router.post("/postagens/nova", (req, res) => {
     }
 })
 
-router.get("/postagens/edit/:id", (req, res) =>{
+router.get("/postagens/edit/:id", async (req, res) => {
+    try {
+        const postagem = await Postagem.findByPk(req.params.id);
+        
+        if (!postagem) {
+            req.flash("error_msg", "Postagem não encontrada");
+            return res.redirect("/admin/postagens");
+        }
 
-    Postagem.findOne({id: req.params.id}).then((postagem) => {
-       
-        Categoria.findAll().then((categorias) => {
+        const categorias = await Categoria.findAll({ raw: true });
+        
+        res.render("admin/editpostagens", {
+            postagem: postagem.get({plian: true}),
+            categorias: categorias
+        });
+        
+    } catch (err) {
+        req.flash("error_msg", "Houve um erro ao carregar o formulário de edição");
+        res.redirect("/admin/postagens");
+    }
+});
+    
 
-        }).catch((err) => {
-            req.flash("error_msg", "Houve um erro ao listar categorias")
-            res.redirect("/admin/postagens")
-        })
 
-    }).catch((err) => {
-        req.flash("err_msg", "Houve um erro ao carregar o fomulario de edição")
-        req.redirect("/admin/postagens")
-    })
-
-    res.render("admin/editpostagens")
-
-})
 
 
     

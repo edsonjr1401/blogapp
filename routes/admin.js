@@ -144,10 +144,13 @@ router.get("/postagens/add", (req, res) => {
 
 router.post("/postagens/nova", (req, res) => {
 
+    console.log("===== DADOS DO FORMULÁRIO =====")
+    console.log(req.body)
+
     var erros = []
 
     if(req.body.categoria == "0"){
-        erros.push({texto: "Categoira invalida, registre uma categoria"})
+        erros.push({texto: "Categoria inválida, registre uma categoria"})
     }
 
     if(erros.length > 0){
@@ -159,23 +162,27 @@ router.post("/postagens/nova", (req, res) => {
             conteudo: req.body.conteudo,
             categoria: req.body.categoria,
             slug: req.body.slug,
-            date: new Date()
+            data: new Date()  // ← CERTIFIQUE-SE QUE ESTÁ AQUI
         }
 
-    Postagem.create(novaPostagem)
-        .then(() => {
-            req.flash("success_msg", "Postagem criada com sucesso!")
-            res.redirect("/admin/postagens")
-        })
-        .catch((err) => {
-            console.log("ERRO:", err)
-            req.flash("error_msg", "Houve um erro durante o salvamento da postagem")
-            res.redirect("/admin/postagens")
-        })
+        console.log("===== DADOS PARA SALVAR =====")
+        console.log(novaPostagem)
+        console.log("===== TIPO DA DATA =====")
+        console.log(typeof novaPostagem.data)
+        console.log(novaPostagem.data)
 
+        Postagem.create(novaPostagem)
+            .then(() => {
+                req.flash("success_msg", "Postagem criada com sucesso!")
+                res.redirect("/admin/postagens")
+            })
+            .catch((err) => {
+                console.log("===== ERRO COMPLETO =====")
+                console.log(err)
+                req.flash("error_msg", "Houve um erro durante o salvamento da postagem")
+                res.redirect("/admin/postagens")
+            })
     }
-
-
 })
 
     

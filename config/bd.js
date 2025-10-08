@@ -8,14 +8,18 @@ const sequelize = new Sequelize('blogapp', 'root', '6863', {
     logging: false 
 });
 
-// 3. (Opcional, mas recomendado) Verifique se a conexão foi bem-sucedida
+// 3. Verifique se a conexão foi bem-sucedida E sincronize as tabelas
 sequelize.authenticate()
     .then(() => {
         console.log("Conexão com o banco de dados realizada com sucesso!");
+        return sequelize.sync();  // ← CRIA/RECRIA AS TABELAS
+    })
+    .then(() => {
+        console.log("Tabelas sincronizadas com sucesso!");
     })
     .catch((error) => {
-        console.error("Erro ao conectar com o banco de dados: ", error);
+        console.error("Erro: ", error);
     });
 
-// 4. Exporte a conexão para que outros arquivos (como seus Models) possam usá-la
+// 4. Exporte a conexão
 module.exports = sequelize;

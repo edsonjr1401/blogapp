@@ -20,7 +20,7 @@ const Postagem = db.define('Postagem', {
         allowNull: false
 },
     data: {
-        type: DataTypes.NUMBER, 
+        type: DataTypes.DATE, 
         allowNull: false
     },
            

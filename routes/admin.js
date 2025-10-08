@@ -127,8 +127,22 @@ router.post("/categorias/deletar", (req, res) => {
     })
 })
 
+
 router.get("/postagens", (req, res) => {
-        res.render("admin/postagens")
+
+    Postagem.findAll({
+       include: [{ model: Categoria }],
+       order: [['data', 'DESC']],
+       raw: true,
+       nest: true
+    }).then((postagens) => {
+        //const postagensLimpa = postagens.map(post => post.get ({ plain: true}))
+        res.render("admin/postagens", { postagens: postagens })    
+    }).catch((err) => {
+        req.flash("error_msg", "Houve um erro ao listar as postagens")
+        res.redirect("/admin")
+    })
+        
 })
 
 router.get("/postagens/add", (req, res) => {
@@ -141,6 +155,7 @@ router.get("/postagens/add", (req, res) => {
             res.redirect("/admin")
         })
 })
+
 
 router.post("/postagens/nova", (req, res) => {
 
@@ -162,7 +177,7 @@ router.post("/postagens/nova", (req, res) => {
             conteudo: req.body.conteudo,
             categoria: req.body.categoria,
             slug: req.body.slug,
-            data: new Date()  // ← CERTIFIQUE-SE QUE ESTÁ AQUI
+            data: new Date() 
         }
 
         console.log("===== DADOS PARA SALVAR =====")
@@ -184,6 +199,27 @@ router.post("/postagens/nova", (req, res) => {
             })
     }
 })
+
+router.get("/postagens/edit/:id", (req, res) =>{
+
+    Postagem.findOne({id: req.params.id}).then((postagem) => {
+       
+        Categoria.findAll().then((categorias) => {
+
+        }).catch((err) => {
+            req.flash("error_msg", "Houve um erro ao listar categorias")
+            res.redirect("/admin/postagens")
+        })
+
+    }).catch((err) => {
+        req.flash("err_msg", "Houve um erro ao carregar o fomulario de edição")
+        req.redirect("/admin/postagens")
+    })
+
+    res.render("admin/editpostagens")
+
+})
+
 
     
 

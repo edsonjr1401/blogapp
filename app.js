@@ -39,10 +39,16 @@ const flash = require("connect-flash");
     app.use(express.static(path.join(__dirname,"public")));
 
 // Rotas 
+
+    app.get('/', (req, res) => {
+        res.render("index")
+    })
+
+
     app.use('/admin', admin);
 
 // Outros
-const PORT = 8081;
+const PORT = 8089;
 app.listen(PORT, function() {
     console.log("Servidor rodando!");
 });

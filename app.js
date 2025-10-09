@@ -4,65 +4,60 @@ const bodyParser = require("body-parser");
 const app = express();
 const admin = require("./routes/admin");
 const path = require("path");
-const Postagem = require("./models/Postagem");
-
-// Importar os novos módulos
+const Postagem = require('./models/Postagem');
+const Categorias = require('./models/Categorias');
 const session = require("express-session");
 const flash = require("connect-flash");
 
-// Configurações 
-   
-    app.use(session({
-        secret: "cursodenode", 
-        resave: true,
-        saveUninitialized: true
-    }));
-    // Iniciar o Flash
-    app.use(flash());
+app.use(session({
+  secret: "cursodenode",
+  resave: true,
+  saveUninitialized: true
+}));
 
-    // Criar o Middleware de mensagens
-    app.use((req, res, next) => {
-        res.locals.success_msg = req.flash("success_msg");
-        res.locals.error_msg = req.flash("error_msg");
-        next();
-    });
+app.use(flash());
 
-    // Body Parser
-    app.use(bodyParser.urlencoded({extended: true}));
-    app.use(bodyParser.json());
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  next();
+});
 
-    // Handlebars 
-    app.engine('handlebars', engine({defaultLayout: 'main'}));
-    app.set('view engine', 'handlebars');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-    // Public
-    app.use(express.static(path.join(__dirname,"public")));
+app.engine('handlebars', engine({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
 
-// Rotas 
-    app.get('/', (req, res) => {
-        Postagem.findAll({
-            include: [{
-                model: Categoria,
-                as: 'categoria' 
-            }],
-            order: [['data', 'DESC']]
-        }).then((postagens) => {
-            res.render("index", { postagens: postagens })
-        }).catch((err) => { 
-            req.flash("error_msg", "Houve um erro interno")
-            res.redirect("/404")
-        })
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use('/admin', admin);
+
+app.get('/', async (req, res) => {
+  try {
+    const postagens = await Postagem.findAll({
+      include: [{
+        model: Categorias,
+        as: 'categorias', // mesmo alias definido no modelo!
+        attributes: ['nome'] // apenas o nome da categoria
+      }],
+      order: [['data', 'DESC']]
     })
 
-    app.get("/404", (req, res) =>{
-        res.send('Erro 404!')
-    })
+    const postagensFormatadas = postagens.map(p => p.toJSON());
+    res.render("index", { postagens: postagensFormatadas });
+  } catch (error) {
+    console.error("Erro ao carregar postagens:", err);
+    req.flash("error_msg", "Houve um erro ao carregar as postagens.");
+    res.redirect("/404");
+  }
+});
 
+app.get("/404", (req, res) => {
+  res.send('Erro 404!');
+});
 
-    app.use('/admin', admin);
-
-// Outros
 const PORT = 8089;
-app.listen(PORT, function() {
-    console.log("Servidor rodando!");
+app.listen(PORT, function () {
+  console.log("Servidor rodando na porta " + PORT);
 });

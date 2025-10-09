@@ -1,9 +1,9 @@
-// models/Categoria.js
+// models/Categorias.js
 
 const { DataTypes } = require('sequelize');
 const db = require('../config/bd');
 
-const Categoria = db.define('Categoria', {
+const Categorias = db.define('Categorias', {
     nome: {
         type: DataTypes.STRING,
         allowNull: false
@@ -21,4 +21,4 @@ const Categoria = db.define('Categoria', {
     tableName: 'categorias' 
 });
 
-module.exports = Categoria;
+module.exports = Categorias;

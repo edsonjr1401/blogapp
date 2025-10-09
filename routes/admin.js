@@ -188,7 +188,7 @@ router.post("/postagens/nova", (req, res) => {
 
         Postagem.create(novaPostagem)
             .then(() => {
-                req.flash("success_msg", "Postagem criada com sucesso!")
+                req.flash("success_msg", "Postagem editada com sucesso!")
                 res.redirect("/admin/postagens")
             })
             .catch((err) => {
@@ -223,11 +223,21 @@ router.get("/postagens/edit/:id", async (req, res) => {
 });
     
 
-
+router.post("/postagens/deletar/", (req, res) => {
+    Postagem.destroy({
+        where: {
+            id: req.body.id
+        }
+        }).then(() => {
+        req.flash("success_msg", "Categoria deletada com sucesso!")
+        res.redirect("/admin/postagens")
+    }).catch((err) => {
+        req.flash("error_msg", "Houve um erro ao deletar a categoria")
+        res.redirect("/admin/postagens")
+    })
+})
 
 
     
 
 module.exports = router;
-
-

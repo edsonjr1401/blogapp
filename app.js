@@ -6,10 +6,10 @@ const admin = require("./routes/admin");
 const path = require("path");
 
 // =======================================================================
-// MÓDULOS (REQUIRES)
+// MÓDULOS E MODELOS (REQUIRES)
 // =======================================================================
 const Postagem = require('./models/Postagem');
-const Categorias = require('./models/Categorias');
+const Categorias = require('./models/Categorias'); 
 
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -17,65 +17,72 @@ const flash = require("connect-flash");
 // =======================================================================
 // CONFIGURAÇÃO DE SESSÃO E FLASH (MIDDLEWARES GERAIS)
 // =======================================================================
+// Configuração da sessão
 app.use(session({
-    secret: "cursodenode",
-    resave: true,
-    saveUninitialized: true
+    secret: "cursodenode", 
+    resave: true, 
+    saveUninitialized: true 
 }));
 
+// Inicialização do Flash (mensagens temporárias)
 app.use(flash());
 
+// Middleware para variáveis locais (acessíveis em todas as views)
 app.use((req, res, next) => {
-    res.locals.success_msg = req.flash("success_msg");
-    res.locals.error_msg = req.flash("error_msg");
-    res.locals.error = req.flash("error");
+    res.locals.success_msg = req.flash("success_msg"); // Mensagens de sucesso
+    res.locals.error_msg = req.flash("error_msg");   // Mensagens de erro padrão
+    res.locals.error = req.flash("error");           // Erros de autenticação, etc.
     next();
 });
 
 // =======================================================================
 // CONFIGURAÇÃO DO BODY-PARSER E HANDLEBARS
 // =======================================================================
+// Configuração para processar dados de formulário
 app.use(bodyParser.urlencoded({ extended: true }));
+// Configuração para processar JSON
 app.use(bodyParser.json());
 
 // Configuração do Handlebars com helpers personalizados
 app.engine('handlebars', engine({
     defaultLayout: 'main',
     helpers: {
+        // Helper de comparação 'eq'
         eq: function (a, b) {
             return a == b;
         }
     }
 }));
 app.set('view engine', 'handlebars');
+// Fixa o diretório de views para o caminho absoluto
 app.set('views', path.join(__dirname, 'views'));
 
 // Configuração de arquivos estáticos (CSS, JS, Imagens)
 app.use(express.static(path.join(__dirname, "public")));
 
 // =======================================================================
-// ROTAS E CHAMADAS DE FUNÇÃO
+// ROTAS DE ADMINISTRAÇÃO E VISUALIZAÇÃO PÚBLICA
 // =======================================================================
 
-// Rota de Administração
+// Rota de Administração (Carrega o módulo de rotas de admin)
 app.use('/admin', admin);
 
 // Rota Principal (RAIZ) - Listagem de Postagens
 app.get('/', async (req, res) => {
     try {
         const postagens = await Postagem.findAll({
-            // Inclui a Categoria usando o alias consistente 'categorias'
+            // Inclui a Categoria usando o alias 'categorias'
             include: [{
                 model: Categorias,
                 as: 'categorias',
                 attributes: ['nome']
             }],
-            // Usa raw e nest para evitar erros do Handlebars e organizar dados
             raw: true,
             nest: true,
             order: [['data', 'DESC']]
         });
 
+        // Retorna a view principal
         res.render("index", { postagens: postagens });
 
     } catch (err) {
@@ -85,10 +92,13 @@ app.get('/', async (req, res) => {
     }
 });
 
+// Rota de Postagem Individual (Visualiza o conteúdo completo)
 app.get("/postagem/:slug", async (req, res) => {
     try {
+        // Busca a postagem usando o slug como critério (where: { slug: ... })
         const postagem = await Postagem.findOne({
             where: { slug: req.params.slug },
+            // Inclui a categoria
             include: [{
                 model: Categorias,
                 as: 'categorias'
@@ -96,14 +106,16 @@ app.get("/postagem/:slug", async (req, res) => {
             raw: true,
             nest: true
         });
+        
         if (postagem) {
             res.render("postagem/index", { postagem: postagem })
         } else {
-            req.flash("erroe_msg", "Esta postagem não existe")
+            req.flash("error_msg", "Esta postagem não existe");
             res.redirect("/")
         }
     } catch (err) {
-        req.flash("error_msg", "Houve um erro interno")
+        console.error("Erro ao carregar postagem individual:", err);
+        req.flash("error_msg", "Houve um erro interno ao carregar a postagem.");
         res.redirect("/")
     }
 });

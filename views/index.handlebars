@@ -14,14 +14,14 @@
 
 
 {{#each postagens}}
-<div class="card">
+<div class="card mt-4">
     <div class="card-body">
-      <small>{{categoria.nome}}</small>
-      <small>data de publicação: {{data}}</small>
-
-      <hr>
         <h3>{{titulo}}</h3>
         <p>{{descricao}}</p>
+        <a href=""><button class="btn btn-success">Leia mais </button></a>
+      <hr>
+      <small>Categoria: {{categorias.nome}}</small> <br>
+      <small>data de publicação: {{data}}</small>
     </div>
 </div>
 {{else}}

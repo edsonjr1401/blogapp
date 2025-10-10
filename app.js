@@ -85,6 +85,29 @@ app.get('/', async (req, res) => {
     }
 });
 
+app.get("/postagem/:slug", async (req, res) => {
+    try {
+        const postagem = await Postagem.findOne({
+            where: { slug: req.params.slug },
+            include: [{
+                model: Categorias,
+                as: 'categorias'
+            }],
+            raw: true,
+            nest: true
+        });
+        if (postagem) {
+            res.render("postagem/index", { postagem: postagem })
+        } else {
+            req.flash("erroe_msg", "Esta postagem não existe")
+            res.redirect("/")
+        }
+    } catch (err) {
+        req.flash("error_msg", "Houve um erro interno")
+        res.redirect("/")
+    }
+});
+
 // Rota de Erro 404
 app.get("/404", (req, res) => {
     res.send('Erro 404!');

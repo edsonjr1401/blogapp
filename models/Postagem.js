@@ -23,8 +23,10 @@ const Postagem = db.define('Postagem', {
         type: DataTypes.DATE,
         allowNull: false
     },
+    // Definição da Chave Estrangeira
     categoriaId: { 
         type: DataTypes.INTEGER,
+        // Referência explícita (bom para clareza)
         references: {
             model: 'Categorias', 
             key: 'id'

@@ -1,30 +1,47 @@
-{{#each erros}}
-    <div class="alert alert-danger">{{texto}}</div>
-{{else}}
-
-{{/each}} 
+<h3>Editar postagem: {{postagem.titulo}}</h3>
 
 <div class="card">
     <div class="card-body">
-        <h4>Editar postagem: </h4>
-        <form action="/admin/postagens/nova" method="POST">
+
+        {{#each erros}}
+        <div class="alert alert-danger">{{texto}}</div>
+        {{/each}}
+
+        <form action="/admin/postagens/edit" method="POST">
+
+            <input type="hidden" name="id" value="{{postagem.id}}">
+
             <label for="titulo">Titulo: </label>
             <input type="text" name="titulo" class="form-control" value="{{postagem.titulo}}" required>
+
             <label for="slug">Slug: </label>
             <input type="text" name="slug" class="form-control" value="{{postagem.slug}}" required>
+
             <label for="descricao">Descrição: </label>
             <input type="text" name="descricao" class="form-control" value="{{postagem.descricao}}" required>
+
             <label for="conteudo">Conteúdo: </label>
-            <textarea name="conteudo" class="form-control" required> {{postagem.conteudo}} </textarea>
-            <label for="categoria">Categoria: </label> 
-            <select name="categoria" class="form-select"> 
-            {{#each categorias}}
-                <option value="{{_id}}">{{nome}}</option>
-            {{else}}
-                <option value="0">Nenhuma categoria registrada</option>
-            {{/each}}     
-            </select>       
-            <button class="btn btn-success mt-3" type="submit">Editar postagem</button>
+            {{! É boa prática remover o espaço antes e depois do {{postagem.conteudo}} na textarea }}
+            <textarea name="conteudo" class="form-control" required>{{postagem.conteudo}}</textarea>
+
+            <label for="categoria">Categoria: </label>
+            <select name="categoria" class="form-select">
+
+                {{! Opção padrão que será rejeitada pela validação no Node.js }}
+                <option value="">-- Selecione uma Categoria --</option>
+
+                {{#each categorias}}
+                {{! 🚨 CORREÇÃO 3A: Usar {{id}} (Sequelize) e verificar se é a categoria atual 🚨}}
+                <option value="{{id}}" {{#if (eq postagem.categoriaId id)}}selected{{/if}}>
+                    {{nome}}
+                </option>
+                {{else}}
+                <option value="">Nenhuma categoria registrada</option>
+                {{/each}}
+            </select>
+
+            <button class="btn btn-primary mt-3" type="submit">Salvar Edição</button>
+            <a href="/admin/postagens" class="btn btn-secondary mt-3">Cancelar</a>
 
         </form>
     </div>

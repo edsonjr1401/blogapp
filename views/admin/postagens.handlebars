@@ -8,7 +8,7 @@
             <h4>{{titulo}}</h4>
             <p>{{descricao}}</p>
             <small>{{data}}</small> <br>
-            <small>{{categoria}}</small> <br>
+            <small>Categoria: {{categorias.nome}}</small> <br>
             <a href="/admin/postagens/edit/{{id}}"><button class="btn btn-success mt-3">Editar postagem</button></a>
            <form action="/admin/postagens/deletar" method="POST">
                 <input type="hidden" name="id" value="{{id}}">

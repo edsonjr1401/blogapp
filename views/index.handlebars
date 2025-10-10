@@ -13,9 +13,13 @@
 <h2>Postagens recentes: </h2>
 
 
-{{#each Postagens}}
+{{#each postagens}}
 <div class="card">
     <div class="card-body">
+      <small>{{categoria.nome}}</small>
+      <small>data de publicação: {{data}}</small>
+
+      <hr>
         <h3>{{titulo}}</h3>
         <p>{{descricao}}</p>
     </div>

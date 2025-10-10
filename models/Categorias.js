@@ -1,5 +1,3 @@
-// models/Categorias.js
-
 const { DataTypes } = require('sequelize');
 const db = require('../config/bd');
 
@@ -17,7 +15,6 @@ const Categorias = db.define('Categorias', {
         defaultValue: DataTypes.NOW
     }
 }, {
-    // Mapeia o modelo para a tabela 'categorias' no banco de dados
     tableName: 'categorias' 
 });
 

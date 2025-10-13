@@ -5,6 +5,7 @@ const app = express();
 const admin = require("./routes/admin");
 const path = require("path");
 
+
 // =======================================================================
 // MÓDULOS E MODELOS (REQUIRES)
 // =======================================================================
@@ -117,6 +118,55 @@ app.get("/postagem/:slug", async (req, res) => {
         console.error("Erro ao carregar postagem individual:", err);
         req.flash("error_msg", "Houve um erro interno ao carregar a postagem.");
         res.redirect("/")
+    }
+});
+
+app.get("/categorias", async (req, res) => {
+    try {
+        const categorias = await Categorias.findAll({
+            raw: true, 
+            order: [['nome', 'ASC']] 
+        });
+        res.render("categorias/index", { categorias: categorias });
+    } catch (err) {
+        console.error("Erro ao listar categorias na rota /categorias:", err);
+        req.flash("error_msg", "Houve um erro interno ao listar as categorias.");
+        res.redirect("/");
+    }
+});
+
+app.get("/categorias/:slug", async (req, res) => {
+    let categoria;
+    let postagens = [];
+    
+    try {
+        categoria = await Categorias.findOne({
+            where: { slug: req.params.slug },
+            raw: true
+        });
+
+        if (categoria) {
+            postagens = await Postagem.findAll({
+                where: { categoriaId: categoria.id },
+                order: [['data', 'DESC']],
+                raw: true,
+                nest: true
+            });
+
+            res.render("categorias/postagens", { 
+                postagens: postagens, 
+                categoria: categoria 
+            });
+
+        } else {
+            req.flash("error_msg", "Essa categoria não existe.");
+            res.redirect("/");
+        }
+
+    } catch (err) {
+        console.error("Erro ao carregar a página da categoria:", err);
+        req.flash("error_msg", "Houve um erro interno ao carregar a página desta categoria.");
+        res.redirect("/");
     }
 });
 

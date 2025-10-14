@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const admin = require("./routes/admin");
 const path = require("path");
+const usuarios = require("./routes/usuarios");
 
 
 // =======================================================================
@@ -11,7 +12,6 @@ const path = require("path");
 // =======================================================================
 const Postagem = require('./models/Postagem');
 const Categorias = require('./models/Categorias'); 
-
 const session = require("express-session");
 const flash = require("connect-flash");
 
@@ -135,40 +135,29 @@ app.get("/categorias", async (req, res) => {
     }
 });
 
-app.get("/categorias/:slug", async (req, res) => {
-    let categoria;
-    let postagens = [];
-    
-    try {
-        categoria = await Categorias.findOne({
-            where: { slug: req.params.slug },
-            raw: true
-        });
+app.get("/categorias/:slug", (req, res) => {
+    Categorias.findOne({slug: req.params.slug}).then((categorias) => {
+        if(categorias){
+            Postagem.find({categoria: categoria._id}).then((postagens) => {
 
-        if (categoria) {
-            postagens = await Postagem.findAll({
-                where: { categoriaId: categoria.id },
-                order: [['data', 'DESC']],
-                raw: true,
-                nest: true
-            });
+                res.render("/categorias/postagens", {postagens: postagens, categorias: categorias})
 
-            res.render("categorias/postagens", { 
-                postagens: postagens, 
-                categoria: categoria 
-            });
+            }).catch((err) => {
+                req.flash("error_msg", "Houve um erro ao listar os posts!")
+            })
 
-        } else {
-            req.flash("error_msg", "Essa categoria não existe.");
-            res.redirect("/");
+        }else{
+            req.flash("error_msg", "Essa categoria não exite")
+            res.redirect("/")
         }
+    }).catch((err) => {
+        req.flash("error_msg", "Houve im erro interno ao carregar a página desta categoria")
+        req.redirect("/")
+    })
+})
 
-    } catch (err) {
-        console.error("Erro ao carregar a página da categoria:", err);
-        req.flash("error_msg", "Houve um erro interno ao carregar a página desta categoria.");
-        res.redirect("/");
-    }
-});
+app.use('/admin', admin)
+app.use("/usuarios", usuarios);
 
 // Rota de Erro 404
 app.get("/404", (req, res) => {

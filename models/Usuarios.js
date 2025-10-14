@@ -19,4 +19,4 @@ const Usuario = db.define('NomeDoModelo', {
     tableName: 'nome_da_tabela'
 });
 
-module.exports = NomeDoModelo;
+module.exports = Usuario;

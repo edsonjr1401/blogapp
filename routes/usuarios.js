@@ -29,8 +29,9 @@ router.post("/registro", (req, res) => {
 
     if(erros.length > 0){
 
-        res.render("usuarios/registro")
-
+        res.render("usuarios/registro", {erros: erros})
+    }else{
+        
     }       
     
 

@@ -27,11 +27,19 @@ router.post("/registro", (req, res) => {
         erros.push({texto:"Senha muito curta"})
     }
 
+    if(req.body.senha != req.body.senha2){
+        erros.push({texto: "As senhas são diferentes, tente novamnete!"})
+    }
+
     if(erros.length > 0){
 
+    
+
         res.render("usuarios/registro", {erros: erros})
+    
+    
     }else{
-        
+
     }       
     
 

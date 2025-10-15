@@ -10,6 +10,10 @@ const Usuario = db.define('NomeDoModelo', {
         type: DataTypes.INTEGER,
         defaultValue: 0
     },
+    eAdmin: {
+        DataTypes: Number,
+        default: 0
+    },
     senha: {
         type: DataTypes.STRING,
         allowNull: false

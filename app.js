@@ -5,6 +5,7 @@ const app = express();
 const admin = require("./routes/admin");
 const usuarios = require("./routes/usuarios");
 const path = require("path");
+const usuarios = require("./routes/usuarios")
 
 // =======================================================================
 // MÓDULOS E MODELOS (REQUIRES)

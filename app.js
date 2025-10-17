@@ -3,17 +3,28 @@ const { engine } = require('express-handlebars');
 const bodyParser = require("body-parser");
 const app = express();
 const admin = require("./routes/admin");
-const usuarios = require("./routes/usuarios");
 const path = require("path");
-const usuarios = require("./routes/usuarios")
+
+// =======================================================================
+// MÓDULOS DE AUTENTICAÇÃO E SESSÃO
+// =======================================================================
+
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport")
 
 // =======================================================================
 // MÓDULOS E MODELOS (REQUIRES)
 // =======================================================================
+const usuarios = require("./routes/usuarios");
 const Postagem = require('./models/Postagem');
 const Categorias = require('./models/Categorias');
-const session = require("express-session");
-const flash = require("connect-flash");
+
+// =======================================================================
+// CARREGAMENTO DO PASSPORT (Configura o objeto 'passport' que foi importado)
+// =======================================================================
+require("./config/auth")(passport);
+
 
 // =======================================================================
 // CONFIGURAÇÃO DE SESSÃO E FLASH (MIDDLEWARES GERAIS)
@@ -23,7 +34,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
-
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(flash());
 
 app.use((req, res, next) => {

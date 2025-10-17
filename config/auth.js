@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 // =======================================================================
 // CONFIGURAÇÃO DO SEQUELIZE E MODEL
 // =======================================================================
-const db = require("../models"); 
+const db = require("../models/Usuarios"); 
 const Usuario = db.Usuario; // Model 'Usuario' do Sequelize
 
 module.exports = function(passport) {

@@ -3,18 +3,19 @@ const router = express.Router();
 // Importação dos modelos.
 const Categorias = require('../models/Categorias');
 const Postagem = require('../models/Postagem');
+const {eAdmin} = require("../helpers/eAdmin")
 
 // =======================================================================
 // ROTA PRINCIPAL DO ADMIN (GET /admin)
 // =======================================================================
-router.get('/', (req, res) => {
+router.get('/', eAdmin, (req, res) => {
     res.render("admin/index");
 });
 
 // =======================================================================
 // ROTAS DE CATEGORIAS: LISTAGEM (GET /admin/categorias)
 // =======================================================================
-router.get('/categorias', async (req, res) => {
+router.get('/categorias', eAdmin, async (req, res) => {
     try {
         const categorias = await Categorias.findAll({
             raw: true,
@@ -55,7 +56,7 @@ router.get('/categorias/add', (req, res) => {
 // =======================================================================
 // ROTAS DE CATEGORIAS: SALVAR NOVA (POST /admin/categorias/nova)
 // =======================================================================
-router.post('/categorias/nova', async (req, res) => {
+router.post('/categorias/nova', eAdmin, async (req, res) => {
     const erros = [];
 
     if (!req.body.nome || req.body.nome == null) {
@@ -91,7 +92,7 @@ router.post('/categorias/nova', async (req, res) => {
 // =======================================================================
 // ROTAS DE CATEGORIAS: EDITAR (GET /admin/categorias/edit/:id)
 // =======================================================================
-router.get('/categorias/edit/:id', async (req, res) => {
+router.get('/categorias/edit/:id', eAdmin, async (req, res) => {
     try {
         // 1. Busca a categoria específica pelo ID
         const categoria = await Categorias.findByPk(req.params.id, {
@@ -118,7 +119,7 @@ router.get('/categorias/edit/:id', async (req, res) => {
 // =======================================================================
 // ROTAS DE CATEGORIAS: SALVAR EDIÇÃO (POST /admin/categorias/edit)
 // =======================================================================
-router.post('/categorias/edit', async (req, res) => {
+router.post('/categorias/edit', eAdmin, async (req, res) => {
     // 1. Validação
     const erros = [];
 
@@ -167,7 +168,7 @@ router.post('/categorias/edit', async (req, res) => {
 // =======================================================================
 // ROTAS DE CATEGORIAS: DELETAR (POST /admin/categorias/deletar)
 // =======================================================================
-router.post('/categorias/deletar', async (req, res) => {
+router.post('/categorias/deletar', eAdmin, async (req, res) => {
     try {
         const idCategoria = req.body.id;
 
@@ -207,7 +208,7 @@ router.post('/categorias/deletar', async (req, res) => {
 // =======================================================================
 // ROTAS DE POSTAGENS: LISTAGEM (GET /admin/postagens)
 // =======================================================================
-router.get("/postagens", async (req, res) => {
+router.get("/postagens", eAdmin, async (req, res) => {
     try {
         const postagens = await Postagem.findAll({
             include: [{ model: Categorias, as: 'categorias' }],
@@ -228,7 +229,7 @@ router.get("/postagens", async (req, res) => {
 // =======================================================================
 // ROTAS DE POSTAGENS: ADICIONAR (GET /admin/postagens/add)
 // =======================================================================
-router.get('/postagens/add', async (req, res) => {
+router.get('/postagens/add', eAdmin, async (req, res) => {
     try {
         // Busca todas as categorias para preencher o campo <select> do formulário
         const categorias = await Categorias.findAll({
@@ -248,7 +249,7 @@ router.get('/postagens/add', async (req, res) => {
 // =======================================================================
 // ROTAS DE POSTAGENS: SALVAR NOVA (POST /admin/postagens/nova)
 // =======================================================================
-router.post('/postagens/nova', async (req, res) => {
+router.post('/postagens/nova', eAdmin, async (req, res) => {
     // Validação
     const erros = [];
 
@@ -293,7 +294,7 @@ router.post('/postagens/nova', async (req, res) => {
 // =======================================================================
 // ROTAS DE POSTAGENS: EDITAR (GET /admin/postagens/edit/:id)
 // =======================================================================
-router.get('/postagens/edit/:id', async (req, res) => {
+router.get('/postagens/edit/:id', eAdmin, async (req, res) => {
     try {
         const postagem = await Postagem.findByPk(req.params.id, {
             raw: true
@@ -325,7 +326,7 @@ router.get('/postagens/edit/:id', async (req, res) => {
 // =======================================================================
 // ROTAS DE POSTAGENS: SALVAR EDIÇÃO (POST /admin/postagens/edit)
 // =======================================================================
-router.post('/postagens/edit', async (req, res) => {
+router.post('/postagens/edit', eAdmin, async (req, res) => {
     // O ID da postagem vem do campo oculto no formulário
     const idPostagem = req.body.id;
     const erros = [];
@@ -379,7 +380,7 @@ router.post('/postagens/edit', async (req, res) => {
 // =======================================================================
 // ROTAS DE POSTAGENS: DELETAR (POST /admin/postagens/deletar)
 // =======================================================================
-router.post('/postagens/deletar', async (req, res) => {
+router.post('/postagens/deletar', eAdmin, async (req, res) => {
     try {
         const idPostagem = req.body.id;
 

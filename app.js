@@ -1,5 +1,6 @@
 const express = require('express');
-const { engine } = require('express-handlebars');
+// Importa o módulo completo do express-handlebars
+const exphbs = require('express-handlebars');
 const bodyParser = require("body-parser");
 const app = express();
 const admin = require("./routes/admin");
@@ -46,7 +47,18 @@ app.use((req, res, next) => {
     res.locals.success_msg = req.flash("success_msg");
     res.locals.error_msg = req.flash("error_msg");
     res.locals.error = req.flash("error");
-    res.locals.user = req.user || null;
+    
+    // === CORREÇÃO DEFINITIVA (BEST PRACTICE) ===
+    // Converte o objeto do usuário (instância de modelo) para um objeto JSON simples.
+    // Isso garante que 'eAdmin' seja uma 'own property' segura.
+    if (req.user) {
+        // Tenta .toJSON() que é padrão para modelos ORM. Se não existir, usa o spread operator.
+        res.locals.user = req.user.toJSON ? req.user.toJSON() : { ...req.user }; 
+    } else {
+        res.locals.user = null;
+    }
+    // ===========================================
+    
     next();
 });
 
@@ -56,14 +68,18 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.engine('handlebars', engine({
+// 1. Cria a instância do Handlebars
+const hbs = exphbs.create({
     defaultLayout: 'main',
+    // === REMOVIDAS todas as tentativas de correção de baixo nível que falharam ===
     helpers: {
         eq: function (a, b) {
             return a == b;
         }
     }
-}));
+});
+
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -124,7 +140,7 @@ app.get("/postagem/:slug", async (req, res) => {
     } catch (err) {
         console.error("Erro ao carregar postagem individual:", err);
         req.flash("error_msg", "Houve um erro interno ao carregar a postagem.");
-        res.redirect("/")
+            res.redirect("/")
     }
 });
 
@@ -172,7 +188,7 @@ app.get("/categorias/:slug", async (req, res) => {
     } catch (err) {
         console.error("Erro ao carregar a página da categoria:", err);
         req.flash("error_msg", "Houve um erro interno ao carregar a página desta categoria.");
-        res.redirect("/");
+            res.redirect("/");
     }
 });
 

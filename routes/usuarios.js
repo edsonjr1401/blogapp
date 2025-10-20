@@ -3,6 +3,7 @@ const router = express.Router();
 const Usuario = require("../models/Usuarios");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const eAdmin = require('../helpers/eAdmin');
 
 // Rota GET - Exibe o formulário de registro
 router.get("/registros", (req, res) => {
@@ -36,7 +37,7 @@ router.post("/registros", async (req, res) => {
         await Usuario.create({
             nome: req.body.nome,
             email: req.body.email,
-            senha: senhaHash
+            senha: senhaHash,
         });
 
         req.flash("success_msg", "Usuário criado com sucesso!");
@@ -71,5 +72,6 @@ router.get("/logout", (req, res) => {
         res.redirect("/");
     });
 });
+
 
 module.exports = router;

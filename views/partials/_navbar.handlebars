@@ -8,7 +8,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" href="/">Home</a>
+          <a class="nav-link" href="/">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/categorias">Categorias</a>
@@ -17,11 +17,18 @@
         {{#if user}}
           {{#if user.eAdmin}}
           <li class="nav-item">
-            <a class="nav-link" href="/admin">Admin</a>
+            <a class="nav-link" href="/admin">Painel Admin</a>
           </li>
           {{/if}}
           <li class="nav-item">
-            <a class="nav-link" href="/usuarios/logout">Logout</a>
+            <a class="nav-link" href="/usuarios/logout">Sair</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/usuarios/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/usuarios/registros">Registro</a>
           </li>
         {{/if}}
       </ul>

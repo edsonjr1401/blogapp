@@ -1,20 +1,15 @@
 const localStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
-
-// =======================================================================
-// CONFIGURAÇÃO DO SEQUELIZE E MODEL
-// =======================================================================
-const db = require("../models/Usuarios"); 
-const Usuario = db.Usuario; // Model 'Usuario' do Sequelize
+const Usuario = require("../models/Usuarios");
 
 module.exports = function(passport) {
 
     // =======================================================================
     // 1. ESTRATÉGIA LOCAL (LOGIN)
     // =======================================================================
-    passport.use(new localStrategy({ 
+    passport.use(new localStrategy({
         usernameField: 'email',
-        passwordField: 'senha' 
+        passwordField: 'senha'
     }, async (email, senha, done) => {
 
         try {
@@ -25,18 +20,18 @@ module.exports = function(passport) {
             if (!usuario) {
                 return done(null, false, { message: "Esta conta não existe" });
             }
-            
+
             // Compara a senha digitada com o HASH armazenado (bcrypt)
-            const batem = await bcrypt.compare(senha, usuario.senha); 
+            const batem = await bcrypt.compare(senha, usuario.senha);
 
             if (batem) {
                 // Senha correta: retorna o objeto usuário
-                return done(null, usuario.get()); 
+                return done(null, usuario);
             } else {
                 // Senha incorreta
                 return done(null, false, { message: "Senha incorreta" });
             }
-            
+
         } catch (err) {
             // Trata erros de busca ou comparação
             console.error("Erro na autenticação local:", err);
@@ -50,7 +45,7 @@ module.exports = function(passport) {
     // =======================================================================
     // Salva apenas o ID do usuário na sessão
     passport.serializeUser((usuario, done) => {
-        done(null, usuario.id); 
+        done(null, usuario.id);
     });
 
 
@@ -61,11 +56,11 @@ module.exports = function(passport) {
     passport.deserializeUser(async (id, done) => {
         try {
             // Busca pelo ID (findByPk do Sequelize)
-            const usuario = await Usuario.findByPk(id); 
+            const usuario = await Usuario.findByPk(id);
 
             if (usuario) {
                 // Retorna o objeto usuário
-                done(null, usuario.get()); 
+                done(null, usuario);
             } else {
                 // Usuário não encontrado
                 done(null, false);

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Usuario = require("../models/Usuarios");
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 
 // Rota GET - Exibe o formulário de registro
 router.get("/registros", (req, res) => {
@@ -10,9 +11,6 @@ router.get("/registros", (req, res) => {
 
 // Rota POST - Cadastra o usuário
 router.post("/registros", async (req, res) => {
-    // =========================================================================
-    // CÓDIGO FUNCIONAL DE VALIDAÇÃO E REGISTRO ATIVADO
-    // =========================================================================
     const erros = [];
 
     if (!req.body.nome) erros.push({ texto: "Nome inválido" });
@@ -42,17 +40,36 @@ router.post("/registros", async (req, res) => {
         });
 
         req.flash("success_msg", "Usuário criado com sucesso!");
-        res.redirect("/");
+        res.redirect("/usuarios/login");
+
     } catch (err) {
         console.error("Erro ao registrar usuário:", err);
-        req.flash("error_msg", "Erro ao criar usuário, tente novamente! Detalhes: " + err.message);
+        req.flash("error_msg", "Erro ao criar usuário, tente novamente!");
         res.redirect("/usuarios/registros");
     }
 });
 
-
+// Rota GET - Exibe o formulário de login
 router.get("/login", (req, res) => {
-    res.render("usuarios/login")
-})
+    res.render("usuarios/login");
+});
+
+// Rota POST - Autentica o usuário
+router.post("/login", passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/usuarios/login",
+    failureFlash: true
+}));
+
+// Rota de Logout
+router.get("/logout", (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            return res.redirect("/");
+        }
+        req.flash("success_msg", "Você foi desconectado!");
+        res.redirect("/");
+    });
+});
 
 module.exports = router;

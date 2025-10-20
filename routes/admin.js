@@ -380,7 +380,7 @@ router.post('/postagens/edit', eAdmin, async (req, res) => {
 // =======================================================================
 // ROTAS DE POSTAGENS: DELETAR (POST /admin/postagens/deletar)
 // =======================================================================
-router.post('/postagens/deletar', eAdmin, async (req, res) => {
+router.post('/postagens/deletar', eAdmin,  async (req, res) => {
     try {
         const idPostagem = req.body.id;
 

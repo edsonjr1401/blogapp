@@ -1,37 +1,105 @@
+{{!-- =================================================================== --}}
+{{!-- NAVBAR PRINCIPAL --}}
+{{!-- =================================================================== --}}
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">Blog do Node</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    
+    {{!-- Logo/Brand --}}
+    <a class="navbar-brand" href="/">
+      <strong>Blog do Node</strong>
+    </a>
+
+    {{!-- Botão Mobile Toggle --}}
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#navbarSupportedContent" 
+      aria-controls="navbarSupportedContent" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    {{!-- Menu de Navegação --}}
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        
+        {{!-- Links Públicos --}}
         <li class="nav-item">
           <a class="nav-link" href="/">Home</a>
         </li>
+        
         <li class="nav-item">
           <a class="nav-link" href="/categorias">Categorias</a>
         </li>
 
+        {{!-- Links para Usuário Logado --}}
         {{#if user}}
+          
+          {{!-- Painel Admin (apenas para admins) --}}
           {{#if user.eAdmin}}
-          <li class="nav-item">
-            <a class="nav-link" href="/admin">Painel Admin</a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin">
+                <i class="bi bi-shield-lock"></i> Painel Admin
+              </a>
+            </li>
           {{/if}}
-          <li class="nav-item">
-            <a class="nav-link" href="/usuarios/logout">Sair</a>
-          </li>
-        {{else}}
-          <li class="nav-item">
-            <a class="nav-link" href="/usuarios/login">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/usuarios/registros">Registro</a>
-          </li>
+
         {{/if}}
       </ul>
+
+      {{!-- Menu de Autenticação (Direita) --}}
+      <ul class="navbar-nav ms-auto">
+        {{#if user}}
+          
+          {{!-- Usuário Logado --}}
+          <li class="nav-item dropdown">
+            <a 
+              class="nav-link dropdown-toggle" 
+              href="#" 
+              id="userDropdown" 
+              role="button" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false"
+            >
+              <i class="bi bi-person-circle"></i> {{user.nome}}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <a class="dropdown-item" href="/usuarios/perfil">
+                  <i class="bi bi-person"></i> Meu Perfil
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="/usuarios/logout">
+                  <i class="bi bi-box-arrow-right"></i> Sair
+                </a>
+              </li>
+            </ul>
+          </li>
+
+        {{else}}
+          
+          {{!-- Usuário Não Logado --}}
+          <li class="nav-item">
+            <a class="nav-link" href="/usuarios/login">
+              <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-light btn-sm ms-2" href="/usuarios/registros">
+              Registrar
+            </a>
+          </li>
+
+        {{/if}}
+      </ul>
+
     </div>
   </div>
 </nav>

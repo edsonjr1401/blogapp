@@ -1,101 +1,93 @@
+// =======================================================================
+// IMPORTAÇÕES
+// =======================================================================
 const express = require('express');
-// Importa o módulo completo do express-handlebars
 const exphbs = require('express-handlebars');
 const bodyParser = require("body-parser");
-const app = express();
-const admin = require("./routes/admin");
-const path = require("path");
-
-// =======================================================================
-// MÓDULOS DE AUTENTICAÇÃO E SESSÃO
-// =======================================================================
-
 const session = require("express-session");
 const flash = require("connect-flash");
-const passport = require("passport")
+const passport = require("passport");
+const path = require("path");
 
-// =======================================================================
-// MÓDULOS E MODELOS (REQUIRES)
-// =======================================================================
+// Rotas
+const admin = require("./routes/admin");
 const usuarios = require("./routes/usuarios");
+
+// Modelos
 const Postagem = require('./models/Postagem');
 const Categorias = require('./models/Categorias');
 
 // =======================================================================
-// CARREGAMENTO DO PASSPORT (Configura o objeto 'passport' que foi importado)
+// INICIALIZAÇÃO DO APP
 // =======================================================================
+const app = express();
+
+// Configuração do Passport
 require("./config/auth")(passport);
 
+// =======================================================================
+// MIDDLEWARES
+// =======================================================================
 
-// =======================================================================
-// CONFIGURAÇÃO DE SESSÃO E FLASH (MIDDLEWARES GERAIS)
-// =======================================================================
+// Sessão
 app.use(session({
     secret: "cursodenode",
     resave: true,
     saveUninitialized: true
 }));
 
-
+// Flash Messages
 app.use(flash());
 
-app.use(passport.initialize())
-app.use(passport.session())
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
-
+// Variáveis Globais
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash("success_msg");
     res.locals.error_msg = req.flash("error_msg");
     res.locals.error = req.flash("error");
     
-    // === CORREÇÃO DEFINITIVA (BEST PRACTICE) ===
-    // Converte o objeto do usuário (instância de modelo) para um objeto JSON simples.
-    // Isso garante que 'eAdmin' seja uma 'own property' segura.
+    // Disponibiliza usuário autenticado
     if (req.user) {
-        // Tenta .toJSON() que é padrão para modelos ORM. Se não existir, usa o spread operator.
-        res.locals.user = req.user.toJSON ? req.user.toJSON() : { ...req.user }; 
+        res.locals.user = req.user.toJSON ? req.user.toJSON() : { ...req.user };
     } else {
         res.locals.user = null;
     }
-    // ===========================================
     
     next();
 });
 
-// =======================================================================
-// CONFIGURAÇÃO DO BODY-PARSER E HANDLEBARS
-// =======================================================================
+// Body Parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// 1. Cria a instância do Handlebars
+// Handlebars
 const hbs = exphbs.create({
     defaultLayout: 'main',
-    // === REMOVIDAS todas as tentativas de correção de baixo nível que falharam ===
     helpers: {
-        eq: function (a, b) {
-            return a == b;
-        }
+        eq: (a, b) => a == b
     }
 });
-
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
+// Arquivos Estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
 // =======================================================================
-// ROTAS DE ADMINISTRAÇÃO E USUÁRIOS
+// ROTAS
 // =======================================================================
+
+// Rotas de Administração e Usuários
 app.use('/admin', admin);
 app.use("/usuarios", usuarios);
 
-// =======================================================================
-// ROTAS PÚBLICAS
-// =======================================================================
+// --- ROTAS PÚBLICAS ---
 
-// Rota Principal - Listagem de Postagens
+// Página Inicial - Listagem de Postagens
 app.get('/', async (req, res) => {
     try {
         const postagens = await Postagem.findAll({
@@ -109,16 +101,16 @@ app.get('/', async (req, res) => {
             order: [['data', 'DESC']]
         });
 
-        res.render("index", { postagens: postagens });
+        res.render("index", { postagens });
 
     } catch (err) {
-        console.error("Erro ao carregar postagens na rota /:", err);
+        console.error("Erro ao carregar postagens:", err);
         req.flash("error_msg", "Houve um erro ao carregar as postagens.");
         res.redirect("/404");
     }
 });
 
-// Rota de Postagem Individual
+// Postagem Individual
 app.get("/postagem/:slug", async (req, res) => {
     try {
         const postagem = await Postagem.findOne({
@@ -132,34 +124,37 @@ app.get("/postagem/:slug", async (req, res) => {
         });
 
         if (postagem) {
-            res.render("postagem/index", { postagem: postagem })
+            res.render("postagem/index", { postagem });
         } else {
             req.flash("error_msg", "Esta postagem não existe");
-            res.redirect("/")
+            res.redirect("/");
         }
+
     } catch (err) {
-        console.error("Erro ao carregar postagem individual:", err);
+        console.error("Erro ao carregar postagem:", err);
         req.flash("error_msg", "Houve um erro interno ao carregar a postagem.");
-            res.redirect("/")
+        res.redirect("/");
     }
 });
 
-// Rota de Listagem de Categorias
+// Listagem de Categorias
 app.get("/categorias", async (req, res) => {
     try {
         const categorias = await Categorias.findAll({
             raw: true,
             order: [['nome', 'ASC']]
         });
-        res.render("categorias/index", { categorias: categorias });
+
+        res.render("categorias/index", { categorias });
+
     } catch (err) {
-        console.error("Erro ao listar categorias na rota /categorias:", err);
+        console.error("Erro ao listar categorias:", err);
         req.flash("error_msg", "Houve um erro interno ao listar as categorias.");
         res.redirect("/");
     }
 });
 
-// Rota de Postagens por Categoria
+// Postagens por Categoria
 app.get("/categorias/:slug", async (req, res) => {
     try {
         const categoria = await Categorias.findOne({
@@ -167,40 +162,40 @@ app.get("/categorias/:slug", async (req, res) => {
             raw: true
         });
 
-        if (categoria) {
-            const postagens = await Postagem.findAll({
-                where: { categoriaId: categoria.id },
-                order: [['data', 'DESC']],
-                raw: true,
-                nest: true
-            });
-
-            res.render("categorias/postagens", {
-                postagens: postagens,
-                categoria: categoria
-            });
-
-        } else {
+        if (!categoria) {
             req.flash("error_msg", "Essa categoria não existe");
-            res.redirect("/");
+            return res.redirect("/");
         }
 
+        const postagens = await Postagem.findAll({
+            where: { categoriaId: categoria.id },
+            order: [['data', 'DESC']],
+            raw: true,
+            nest: true
+        });
+
+        res.render("categorias/postagens", { postagens, categoria });
+
     } catch (err) {
-        console.error("Erro ao carregar a página da categoria:", err);
+        console.error("Erro ao carregar categoria:", err);
         req.flash("error_msg", "Houve um erro interno ao carregar a página desta categoria.");
-            res.redirect("/");
+        res.redirect("/");
     }
 });
 
-// Rota de Erro 404
+// Página de Erro 404
 app.get("/404", (req, res) => {
-    res.send('Erro 404!');
+    res.render("404"); // ou res.status(404).send('Erro 404!');
 });
 
 // =======================================================================
 // INICIALIZAÇÃO DO SERVIDOR
 // =======================================================================
-const PORT = 8089;
-app.listen(PORT, function () {
-    console.log("Servidor rodando na porta " + PORT);
+const PORT = process.env.PORT || 8089;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`📍 Acesse: http://localhost:${PORT}`);
 });
+
+module.exports = app;

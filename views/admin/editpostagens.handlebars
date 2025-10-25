@@ -3,46 +3,89 @@
 <div class="card">
     <div class="card-body">
 
+        {{!-- Exibição de erros de validação --}}
         {{#each erros}}
         <div class="alert alert-danger">{{texto}}</div>
         {{/each}}
 
         <form action="/admin/postagens/edit" method="POST">
 
+            {{!-- Campo oculto para o ID da postagem que será editada --}}
             <input type="hidden" name="id" value="{{postagem.id}}">
 
-            <label for="titulo">Titulo: </label>
-            <input type="text" name="titulo" class="form-control" value="{{postagem.titulo}}" required>
+            {{!-- Título --}}
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título:</label>
+                <input type="text" name="titulo" class="form-control" value="{{postagem.titulo}}" required>
+            </div>
 
-            <label for="slug">Slug: </label>
-            <input type="text" name="slug" class="form-control" value="{{postagem.slug}}" required>
+            {{!-- Slug --}}
+            <div class="mb-3">
+                <label for="slug" class="form-label">Slug:</label>
+                <input type="text" name="slug" class="form-control" value="{{postagem.slug}}" required>
+            </div>
 
-            <label for="descricao">Descrição: </label>
-            <input type="text" name="descricao" class="form-control" value="{{postagem.descricao}}" required>
+            {{!-- Descrição --}}
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição:</label>
+                <input type="text" name="descricao" class="form-control" value="{{postagem.descricao}}" required>
+            </div>
 
-            <label for="conteudo">Conteúdo: </label>
-            {{! É boa prática remover o espaço antes e depois do {{postagem.conteudo}}
-            <textarea name="conteudo" class="form-control" required>{{postagem.conteudo}}</textarea>
+            {{!-- Conteúdo --}}
+            <div class="mb-3">
+                <label for="conteudo" class="form-label">Conteúdo:</label>
+                {{!-- Removido o comentário de boa prática e uso da tag textarea --}}
+                <textarea name="conteudo" class="form-control" rows="8" required>{{postagem.conteudo}}</textarea>
+            </div>
 
-            <label for="categoria">Categoria: </label>
-            <select name="categoria" class="form-select">
+            {{!-- Categoria --}}
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoria:</label>
+                <select name="categoria" class="form-select" required>
 
-                {{! Opção padrão que será rejeitada pela validação no Node.js }}
-                <option value="">-- Selecione uma Categoria --</option>
+                    {{!-- Adicionado 'required' na tag select --}}
+                    <option value="" disabled>-- Selecione uma Categoria --</option>
 
-                {{#each categorias}}
-                
-                <option value="{{id}}" {{#if (eq postagem.categoriaId id)}}selected{{/if}}>
-                    {{nome}}
-                </option>
-                {{else}}
-                <option value="">Nenhuma categoria registrada</option>
-                {{/each}}
-            </select>
+                    {{#each categorias}}
+                    <option value="{{id}}" {{#if (eq postagem.categoriaId id)}}selected{{/if}}>
+                        {{nome}}
+                    </option>
+                    {{else}}
+                    <option value="" disabled>Nenhuma categoria registrada</option>
+                    {{/each}}
+                </select>
+            </div>
 
-            <button class="btn btn-primary mt-3" type="submit">Salvar Edição</button>
-            <a href="/admin/postagens" class="btn btn-secondary mt-3">Cancelar</a>
+            {{!-- Botões de Ação --}}
+            <button class="btn btn-success me-2" type="submit">Salvar Edição</button>
+            <a href="/admin/postagens" class="btn btn-secondary">Cancelar</a>
+
+            {{!-- Botão de Deleção (Recomendado para melhor UX) --}}
+            <button type="button" class="btn btn-danger float-end" data-bs-toggle="modal" data-bs-target="#modalDeletar">
+                Deletar Postagem
+            </button>
 
         </form>
+    </div>
+</div>
+
+{{!-- Estrutura do Modal para Confirmação de Deleção (Melhor Prática de UX/Segurança) --}}
+<div class="modal fade" id="modalDeletar" tabindex="-1" aria-labelledby="modalLabelDeletar" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabelDeletar">Confirmar Deleção</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja deletar a postagem **{{postagem.titulo}}**? Esta ação não pode ser desfeita.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form action="/admin/postagens/deletar/{{postagem.id}}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Confirmar Deleção</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>

@@ -1,21 +1,39 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/bd');
+const db = require('../config/database'); 
 
-const Categorias = db.define('Categorias', {
+const Categoria = db.define('Categoria', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     nome: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "O nome da categoria não pode ser vazio."
+            }
+        }
     }, 
     slug: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true, 
+        validate: {
+            notEmpty: {
+                msg: "O slug não pode ser vazio."
+            }
+        }
     },
-    date: {
+    date: { 
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }
 }, {
-    tableName: 'categorias' 
+    tableName: 'categorias',
+    timestamps: true,
+    freezeTableName: true
 });
 
-module.exports = Categorias;
+module.exports = Categoria;

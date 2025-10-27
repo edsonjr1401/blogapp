@@ -2,41 +2,45 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/bootstrap.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>Blog NodeJS</title>
 </head>
 <body>
-    {{>_navbar}}
+    
+    {{! Renderiza o Navbar, um partial do Handlebars }}
+    {{> _navbar}}
+    
     <div class="container mt-4">
         
+        {{!-- Bloco para Mensagens de Sucesso --}}
         {{#if success_msg}}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{success_msg}}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                **Sucesso!** {{success_msg}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
             </div>
         {{/if}}
 
+        {{!-- Bloco Consolidado para Todas as Mensagens de Erro --}}
         {{#if error_msg}}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{error_msg}}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                **Erro:** {{error_msg}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
             </div>
-        {{/if}}
-
-        {{#if error}}
+        {{else if error}}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{error}}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                **Erro:** {{error}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
             </div>
         {{/if}}
         
+        {{!-- Injeta o conteúdo específico da view --}}
         {{{body}}}
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
-    <script src="/js/bootstrap.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script src="/js/bootstrap.js"></script> 
 </body>
 </html>

@@ -47,17 +47,17 @@ function validarRegistro(body) {
 // =======================================================================
 
 // GET - Formulário de Registro
-router.get("/registros", (req, res) => {
-    res.render("usuarios/registros");
+router.get("/registro", (req, res) => {
+    res.render("usuarios/registro");
 });
 
 // POST - Cadastrar Novo Usuário
-router.post("/registros", async (req, res) => {
+router.post("/registro", async (req, res) => {
     try {
         // Validação dos dados
         const erros = validarRegistro(req.body);
         if (erros.length > 0) {
-            return res.render("usuarios/registros", { erros });
+            return res.render("usuarios/registro", { erros });
         }
 
         // Verifica se o e-mail já existe
@@ -67,7 +67,7 @@ router.post("/registros", async (req, res) => {
 
         if (usuarioExistente) {
             req.flash("error_msg", "Já existe uma conta com este e-mail");
-            return res.redirect("/usuarios/registros");
+            return res.redirect("/usuarios/registro");
         }
 
         // Criptografa a senha
@@ -87,7 +87,7 @@ router.post("/registros", async (req, res) => {
     } catch (err) {
         console.error("Erro ao registrar usuário:", err);
         req.flash("error_msg", "Erro ao criar usuário. Tente novamente!");
-        res.redirect("/usuarios/registros");
+        res.redirect("/usuarios/registro");
     }
 });
 

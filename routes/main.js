@@ -7,6 +7,13 @@ const router = express.Router();
 const Postagem = require('../models/Postagem');
 const Categorias = require('../models/Categorias');
 
+// Helper para tratamento de erros e redirecionamento
+const handleErrorAndRedirect = (res, req, errorMessage, redirectPath, err) => {
+    console.error("Erro:", err);
+    req.flash("error_msg", errorMessage);
+    res.redirect(redirectPath);
+};
+
 // =======================================================================
 // ROTAS PÚBLICAS
 // =======================================================================
@@ -28,9 +35,7 @@ router.get('/', async (req, res) => {
         res.render("index", { postagens });
 
     } catch (err) {
-        console.error("Erro ao carregar postagens:", err);
-        req.flash("error_msg", "Houve um erro ao carregar as postagens.");
-        res.redirect("/404");
+        handleErrorAndRedirect(res, req, "Houve um erro ao carregar as postagens.", "/404", err);
     }
 });
 
@@ -55,9 +60,7 @@ router.get("/postagem/:slug", async (req, res) => {
         }
 
     } catch (err) {
-        console.error("Erro ao carregar postagem:", err);
-        req.flash("error_msg", "Houve um erro interno ao carregar a postagem.");
-        res.redirect("/");
+        handleErrorAndRedirect(res, req, "Houve um erro interno ao carregar a postagem.", "/", err);
     }
 });
 
@@ -72,9 +75,7 @@ router.get("/categorias", async (req, res) => {
         res.render("categorias/index", { categorias });
 
     } catch (err) {
-        console.error("Erro ao listar categorias:", err);
-        req.flash("error_msg", "Houve um erro interno ao listar as categorias.");
-        res.redirect("/");
+        handleErrorAndRedirect(res, req, "Houve um erro interno ao listar as categorias.", "/", err);
     }
 });
 
@@ -101,9 +102,7 @@ router.get("/categorias/:slug", async (req, res) => {
         res.render("categorias/postagens", { postagens, categoria });
 
     } catch (err) {
-        console.error("Erro ao carregar categoria:", err);
-        req.flash("error_msg", "Houve um erro interno ao carregar a página desta categoria.");
-        res.redirect("/");
+        handleErrorAndRedirect(res, req, "Houve um erro interno ao carregar a página desta categoria.", "/", err);
     }
 });
 
